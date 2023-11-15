@@ -1,10 +1,8 @@
 #include <iostream>
-#include "Card/card.h"
-#include "DeckStatick/deck.h"
+#include "Cards/card.h"
 
 
 int main(){
-    std::cout << "Hello World!\n";
     Card::Card card;
 
     std::cout << card.get_rang() << ' ';
@@ -45,31 +43,5 @@ int main(){
         std::cout << "True\n";
     else
         std::cout << "False\n";
-
-    /*
-    Deck::Deck old_deck{23};
-    Deck::Deck new_deck{23};
-
-    old_deck.sort();
-    new_deck.sort();
-
-    //std::cout << old_deck;
-    //std::cout << new_deck;
-
-    //old_deck >> new_deck;
-
-    //std::cout << old_deck;
-    //std::cout << new_deck;
-    //std::cout << old_deck + new_deck;
-    //std::cout << new_deck.duplicate();
-
-    //std::cout << new_deck;
-
-    std::cout << "Separated\n";
-    new_deck = old_deck.separate(1);
-
-    //std::cout << new_deck;
-
-    */
     return 0;
 }
