@@ -15,6 +15,8 @@ namespace Card{
         explicit Card ();
         explicit Card (int seed);
         explicit Card (int new_rang, int new_suits);
+        // Cards(const Cards& card); // copy constructor
+        // Cards(Cards&& card) noexcept; // move constructor
 
         // Setters
         Card &set_rang(int new_rang);
@@ -24,14 +26,24 @@ namespace Card{
         [[nodiscard]] int get_rang() const { return rang; }
         [[nodiscard]] int get_suits() const { return suits; }
 
-        // Overloading
-        friend bool operator==(const Card& l, const Card& r);
-        friend bool operator!=(const Card& l, const Card& r);
-        friend bool operator<(const Card& l, const Card& r);
-        friend bool operator<=(const Card& l, const Card& r);
-        friend bool operator>(const Card& l, const Card& r);
-        friend bool operator>=(const Card& l, const Card& r);
+        //Overloading
+        bool operator<(const Card &rhs) const;
+
+        bool operator>(const Card &rhs) const;
+
+        bool operator<=(const Card &rhs) const;
+
+        bool operator>=(const Card &rhs) const;
+
+        bool operator==(const Card &rhs) const;
+
+        bool operator!=(const Card &rhs) const;
+
+        //Cards& operator=(const Cards& card);
+
         friend std::ostream &operator<<(std::ostream &s, const Card &card);
+        friend std::istream &operator>>(std::istream &in, Card &card);
+
     };
 }
 
