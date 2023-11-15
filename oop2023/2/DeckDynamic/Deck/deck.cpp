@@ -243,17 +243,9 @@ namespace Deck{
     }
 
     std::istream &operator >>(std::istream &in, Deck &deck) {
-        int n;
-        in >> n;
-
         if (in.good()){
-            if (n != deck.get_card_n()){
-                in.setstate(std::ios::failbit);
-            }
-            else{
-                for (int i = 0; i < deck.get_card_n(); i++){
-                    in >> deck[i];
-                }
+            for (int i = 0; i < deck.get_card_n(); i++){
+                in >> deck[i];
             }
         }
         else {

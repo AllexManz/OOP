@@ -90,6 +90,10 @@ TEST_CASE("DECK_DYNAMIC_OPERATORS"){
         std::cout << deck1;
         std::cout << deck;
     }
+    SECTION(">> input"){
+        Deck::Deck deck{1, 1};
+        std::cin >> deck;
+    }
 }
 
 TEST_CASE("DECK_DYNAMIC_METHODS"){
