@@ -38,8 +38,8 @@ TEST_CASE("DECK_DYNAMIC_OPERATORS"){
         Deck::Deck deck1;
         Deck::Deck deck2;
         Deck::Deck deck3{10, 12};
-        REQUIRE((deck1 == deck2) == true);
-        REQUIRE((deck1 == deck3) == false);
+        REQUIRE(deck1 == deck2);
+        REQUIRE_FALSE(deck1 == deck3);
         deck2[0].set_rang(1);
         REQUIRE((deck1 == deck2) == false);
     }

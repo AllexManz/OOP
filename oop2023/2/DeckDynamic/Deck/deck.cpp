@@ -109,6 +109,7 @@ namespace Deck{
     bool Deck::operator==(const Deck &rhs) const {
         if (this->card_n != rhs.card_n)
             return false;
+        //std::equals
         for (int i = 0; i < this->card_n; i++){
             if (this->cards[i].get_suits() == rhs.cards[i].get_suits()) {
                 if (this->cards[i] != rhs.cards[i]) {
@@ -125,10 +126,7 @@ namespace Deck{
         try {
             Card::Card* tmp = this->cards;
             this->cards = new Card::Card[new_size];
-            if (new_size >= old_size)
-                std::copy(tmp, tmp + old_size, this->cards);
-            else
-                std::copy(tmp, tmp + new_size, this->cards);
+            std::copy(tmp, tmp + std::min(new_size, old_size), this->cards);
             delete[] tmp;
         }
         catch(...) {
@@ -143,51 +141,37 @@ namespace Deck{
         return this->cards[index];
     }
 
-    Deck operator+( Deck &l, const Deck &r) {
-        try{
-            Deck deck(l.card_n + r.card_n, 1); //= new Deck{l.card_n + r.card_n, 1};
+    Deck operator+(const Deck &l, const Deck &r) {
+        Deck deck(l.card_n + r.card_n, 1); //= new Deck{l.card_n + r.card_n, 1};
 
-            int cnt = 0;
-            for (int i = 0; i < l.card_n; i++){
-                deck.cards[cnt].set_rang(l.cards[i].get_rang());
-                deck.cards[cnt].set_suits(l.cards[i].get_suits());
-            }
-
-            for (int i = 0; i < r.card_n; i++){
-                deck.cards[cnt].set_rang(r.cards[i].get_rang());
-                deck.cards[cnt].set_suits(r.cards[i].get_suits());
-            }
-
-            return deck;
+        int cnt = 0;
+        for (int i = 0; i < l.card_n; i++){
+            deck.cards[cnt].set_rang(l.cards[i].get_rang());
+            deck.cards[cnt].set_suits(l.cards[i].get_suits());
         }
-        catch(...){
-            throw;
+
+        for (int i = 0; i < r.card_n; i++){
+            deck.cards[cnt].set_rang(r.cards[i].get_rang());
+            deck.cards[cnt].set_suits(r.cards[i].get_suits());
         }
+
+        return deck;
+
     }
 
     void Deck::operator>>(Deck &rhs) {
-        try {
-            if (this->card_n == 0)
-                throw std::invalid_argument("Number of cards should be greater than zero\n");
-            rhs.push_back(this->pop());
-        }
-        catch (...) {
-            throw;
-        }
+        if (this->card_n == 0)
+            throw std::invalid_argument("Number of cards should be greater than zero\n");
+        rhs.push_back(this->pop());
     }
 
     Deck &Deck::push_back(Card::Card card) {
-        try {
-            this->resize(this->card_n + 1);
-            this->cards[this->card_n - 1] = card;
-        }
-        catch (...) {
-            throw;
-        }
+        this->resize(this->card_n + 1);
+        this->cards[this->card_n - 1] = card;
         return *this;
     }
 
-    struct {
+    struct comparator{
         bool operator()(Card::Card l, Card::Card r) {
             if (l.get_suits() < r.get_suits())
                 return false;
@@ -196,33 +180,36 @@ namespace Deck{
 
             return l > r;
         }
-    }comparator;
+    };
 
     void Deck::sort(int flag) {
         if (flag == -1){
+            /*
             for (int i = 0; i < this->card_n; i++){
                 for (int j = 0; j < this->card_n; j++){
-                    if (comparator(cards[i], cards[j])){
+                    if (comparator{}(cards[i], cards[j])){
                         Card::Card card = cards[i];
                         cards[i] = cards[j];
                         cards[j] = card;
                     }
                 }
             }
-            //std::sort(this->get_cards(), this->get_cards() + this->get_card_n(), comparator);
+            */
+            std::sort(cards, cards + this->get_card_n(), comparator{});
             return;
         }
         if (flag == 1){
-            for (int i = 0; i < this->card_n; i++){
-                for (int j = 0; j < this->card_n; j++){
-                    if (!comparator(cards[i], cards[j])){
-                        Card::Card card = cards[i];
-                        cards[i] = cards[j];
-                        cards[j] = card;
-                    }
-                }
-            }
-            //std::sort(this->get_cards(), this->get_cards() + this->get_card_n(), comparator);
+//            for (int i = 0; i < this->card_n; i++){
+//                for (int j = 0; j < this->card_n; j++){
+//                    if (!comparator(cards[i], cards[j])){
+//                        Card::Card card = cards[i];
+//                        cards[i] = cards[j];
+//                        cards[j] = card;
+//                    }
+//                }
+//            }
+            std::sort(cards, cards + this->get_card_n(),
+                      [](auto l, auto r){return !comparator{}(l, r);});
             return;
         }
         throw std::invalid_argument("Wrong value of flag");
@@ -243,13 +230,11 @@ namespace Deck{
     }
 
     std::istream &operator >>(std::istream &in, Deck &deck) {
-        if (in.good()){
-            for (int i = 0; i < deck.get_card_n(); i++){
-                in >> deck[i];
+        for (int i = 0; i < deck.get_card_n(); i++){
+            if (!in.good()){
+                break;
             }
-        }
-        else {
-            in.setstate(std::ios::failbit);
+            in >> deck[i];
         }
         return in;
     }
@@ -257,6 +242,7 @@ namespace Deck{
     
 
     void Deck::shuffle() {
+        //std::shuffle
         for (int i = 0; i < card_n; i++){
             int j = rand() % card_n;
             Card::Card temp = cards[i];
@@ -266,16 +252,11 @@ namespace Deck{
     }
 
     void Deck::add(int seed){
-        try{
-            if (seed < 0)
-                throw std::invalid_argument("Seed should be positive");
+        if (seed < 0)
+            throw std::invalid_argument("Seed should be positive");
 
-            Card::Card card{seed};
-            this->push_back(card);
-        }
-        catch (...){
-            throw;
-        }
+        Card::Card card{seed};
+        this->push_back(card);
     }
 
 
