@@ -11,7 +11,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 
 
-
 # CARD CLASS
 add_subdirectory(Card/Cards)
 
